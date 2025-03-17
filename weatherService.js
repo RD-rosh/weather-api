@@ -1,7 +1,8 @@
 const fetch = require('node-fetch'); 
 const User = require('./models/User');
+const nodemailer = require('nodemailer');
 
-const fetchWeather = async () => {
+const fetchWeatherAndEmail = async () => {
   try {
     const users = await User.find();
 
@@ -17,11 +18,29 @@ const fetchWeather = async () => {
 
       user.weatherData.push({ temperature: temp, description: desc });
       await user.save();
-      console.log('saved weather');
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+
+      const weatherText = (user.location, temp, desc);
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: user.email,
+        subject: `Weather Update for ${user.location}`,
+        text: `${weatherText}`,
+      };
+
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent to ${user.email}`);
     }
   } catch (error) {
     console.error('Error in weather service:', error.message);
   }
 };
 
-module.exports = { fetchWeather };
+module.exports = { fetchWeatherAndEmail };
