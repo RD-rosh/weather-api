@@ -17,6 +17,7 @@ const fetchWeather = async () => {
 
       user.weatherData.push({ temperature: temp, description: desc });
       await user.save();
+      console.log('saved weather');
     }
   } catch (error) {
     console.error('Error in weather service:', error.message);
