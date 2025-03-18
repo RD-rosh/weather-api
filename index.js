@@ -15,12 +15,17 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
   .catch(err => console.log('Connection error:', err));
 
 app.use('/api/users', userRoutes);
+fetchWeatherAndEmail();
 
-//5 mins cronjob
-cron.schedule('*/1 * * * *', () => {
-  console.log('fetch weather');
-  fetchWeatherAndEmail();
-});
+//cron.schedule('0 */3 * * *', () => {
+//  console.log('fetch weather');
+  //fetchWeatherAndEmail();
+//});
+
+//cron.schedule('*/1 * * * *', () => {
+ // console.log('fetch weather');
+  //fetchWeatherAndEmail();
+//});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
